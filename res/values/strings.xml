@@ -6,5 +6,8 @@
     <string name="action_settings">Settings</string>
     <string name="add_word">Enter a word</string>
     <string name="button_add">Add Word</string>
+    
+    <string name="title_activity_list_words">ListWords</string>
+    <string name="button_view">View words</string>
 
 </resources>

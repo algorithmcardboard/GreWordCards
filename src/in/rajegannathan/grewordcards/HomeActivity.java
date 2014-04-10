@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -47,6 +48,11 @@ public class HomeActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void viewWords(View view){
+        Intent intent = new Intent(this, ListWordsActivity.class);
+        startActivity(intent);
 	}
 
 	public void addWord(View view) {

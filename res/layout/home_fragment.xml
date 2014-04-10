@@ -23,5 +23,14 @@
         android:layout_centerHorizontal="true"
         android:onClick="addWord"
         android:text="@string/button_add" />
+    
+    <Button 
+        android:id="@+id/button_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="1dp"
+        android:onClick="viewWords"
+        android:text="@string/button_view"/>
 
 </RelativeLayout>

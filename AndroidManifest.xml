@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="in.rajegannathan.grewordcards"
+    android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="1.0" 
-    android:installLocation="auto" >
+    android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -22,6 +22,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="in.rajegannathan.grewordcards.ListWordsActivity"
+            android:label="@string/title_activity_list_words"
+            android:parentActivityName="in.rajegannathan.grewordcards.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.rajegannathan.grewordcards.HomeActivity" />
         </activity>
     </application>
 
