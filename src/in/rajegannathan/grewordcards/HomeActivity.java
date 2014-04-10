@@ -1,9 +1,14 @@
 package in.rajegannathan.grewordcards;
 
+import in.rajegannathan.grewordcards.DatabaseContract.Wordcard;
+import in.rajegannathan.grewordcards.localdb.DBHelper;
+
 import java.util.logging.Logger;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,8 +18,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 public class HomeActivity extends Activity {
-	
-	private static final Logger logger = Logger.getLogger(HomeActivity.class.getName());
+
+	private static final Logger logger = Logger.getLogger(HomeActivity.class
+			.getName());
+	private DBHelper mDbHelper = new DBHelper(getApplicationContext());
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +48,21 @@ public class HomeActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	public void addWord(View view){
-		EditText wordTextBox = (EditText)findViewById(R.id.add_word);
+
+	public void addWord(View view) {
+		EditText wordTextBox = (EditText) findViewById(R.id.add_word);
 		String newWord = wordTextBox.getText().toString();
 		logger.info("in add Word " + newWord);
+
+		SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(Wordcard.COLUMN_WORD, newWord);
+		values.put(Wordcard.COLUMN_VIEWS, 0);
+		values.put(Wordcard.COLUMN_CREATED_AT, System.currentTimeMillis());
+		values.put(Wordcard.COLUMN_UPDATED_AT, System.currentTimeMillis());
+
+		db.insert(Wordcard.TABLE_NAME, null, values);
+		logger.info("word inserted successfully");
 	}
 
 	/**
