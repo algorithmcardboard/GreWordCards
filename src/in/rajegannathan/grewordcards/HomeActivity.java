@@ -22,7 +22,6 @@ public class HomeActivity extends Activity {
 
 	private static final Logger logger = Logger.getLogger(HomeActivity.class
 			.getName());
-	private DBHelper mDbHelper = new DBHelper(getApplicationContext());
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +59,7 @@ public class HomeActivity extends Activity {
 		String newWord = wordTextBox.getText().toString();
 		logger.info("in add Word " + newWord);
 
+		DBHelper mDbHelper = new DBHelper(getApplicationContext());
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(Wordcard.COLUMN_WORD, newWord);
