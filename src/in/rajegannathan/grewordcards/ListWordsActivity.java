@@ -1,7 +1,13 @@
 package in.rajegannathan.grewordcards;
 
+import java.util.logging.Logger;
+
+import in.rajegannathan.grewordcards.DatabaseContract.Wordcard;
+import in.rajegannathan.grewordcards.localdb.DBHelper;
 import android.app.Activity;
 import android.app.Fragment;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,11 +16,36 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class ListWordsActivity extends Activity {
+	
+	private static final Logger logger = Logger.getLogger(ListWordsActivity.class
+			.getName());
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_words);
+		
+		DBHelper mDbHelper = new DBHelper(getApplicationContext());
+		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		
+		String [] projection = {
+			Wordcard.COLUMN_WORD,
+			Wordcard.COLUMN_VIEWS
+		};
+		String sortOrder = Wordcard.COLUMN_VIEWS + " DESC";
+		
+		Cursor cursor = db.query(Wordcard.TABLE_NAME, projection, null, null, null, null, sortOrder);
+		logger.info(cursor.toString());
+		
+		logger.info(""+cursor.getCount());
+		logger.info(cursor.getColumnNames()[0].toString()+" "+cursor.getColumnNames()[1].toString());
+		
+		cursor.moveToFirst();
+		while(cursor.isAfterLast() == false){
+			logger.info(cursor.getString(1));
+			logger.info(cursor.getString(0));
+			cursor.moveToNext();
+		}
 
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
