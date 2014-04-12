@@ -24,7 +24,7 @@ public class DatabaseContract {
 		public static final String COLUMN_UPDATED_AT = "updated_at";
 		
 		public static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE_NAME
-				+ " (" + BaseColumns._ID + INTEGER_TYPE + " PRIMARY KEY, "
+				+ " (" + BaseColumns._ID + INTEGER_TYPE + " PRIMARY KEY AUTOINCREMENT NOT NULL, "
 				+ COLUMN_WORD + TEXT_TYPE + COMMA_SEP 
 				+ COLUMN_VIEWS + INTEGER_TYPE + COMMA_SEP
 				+ COLUMN_CREATED_AT + INTEGER_TYPE + COMMA_SEP
