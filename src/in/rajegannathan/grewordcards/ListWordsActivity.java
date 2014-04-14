@@ -26,7 +26,6 @@ public class ListWordsActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		setContentView(R.layout.activity_list_words);
 
 		DBHelper mDbHelper = new DBHelper(getApplicationContext());
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
