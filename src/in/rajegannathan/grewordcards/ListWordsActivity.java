@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,6 +45,8 @@ public class ListWordsActivity extends ListActivity {
 		setListAdapter(mAdapter);
 
 		ListView wordList = getListView();
+		registerForContextMenu(wordList);
+		
 		if (wordList != null) {
 			wordList.setOnItemLongClickListener(new OnItemLongClickListener() {
 
@@ -60,6 +63,15 @@ public class ListWordsActivity extends ListActivity {
 			logger.info("listview is "+listView.toString());
 		}
 	}
+	
+	@Override
+	public void onCreateContextMenu(android.view.ContextMenu menu, View v, android.view.ContextMenu.ContextMenuInfo menuInfo) {
+		logger.info("in create context view method");
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.word_context_menu, menu);
+	};
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

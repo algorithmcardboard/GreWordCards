@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="in.rajegannathan.grewordcards.ListWordsActivity" >
+
+    <item
+        android:id="@+id/context_menu"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/word_context_menu_title"/>
+</menu>
