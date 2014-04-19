@@ -26,6 +26,7 @@ public class HomeActivity extends Activity {
 			.getName());
 	private EditText wordTextBox = null;
 	private Button addWordsButton;
+	private boolean resetButtonText = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,11 @@ public class HomeActivity extends Activity {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
+				if(!resetButtonText){
+					return;
+				}
+				resetButtonText = false;
+				addWordsButton.setText(R.string.button_add);
 			}
 
 			@Override
@@ -50,7 +56,7 @@ public class HomeActivity extends Activity {
 
 			@Override
 			public void afterTextChanged(Editable s) {
-				if (addWordsButton.getText().toString().trim().length() != 0) {
+				if (wordTextBox.getText().toString().trim().length() != 0) {
 					addWordsButton.setEnabled(true);
 				}
 			}
@@ -105,6 +111,9 @@ public class HomeActivity extends Activity {
 		db.insert(Wordcard.TABLE_NAME, null, values);
 		logger.info("word inserted successfully");
 		wordTextBox.setText("");
+		addWordsButton.setText("Added '"+newWord+"'");
+		resetButtonText = true;
+		addWordsButton.setEnabled(false);
 		hideSoftInput();
 	}
 
