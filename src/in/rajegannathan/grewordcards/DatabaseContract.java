@@ -17,6 +17,7 @@ public class DatabaseContract {
 		private Wordcard() {
 		}
 
+		public static final String COLUMN_ID = BaseColumns._ID;
 		public static final String TABLE_NAME = "word_list";
 		public static final String COLUMN_WORD = "word";
 		public static final String COLUMN_VIEWS = "views";
