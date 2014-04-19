@@ -10,5 +10,6 @@
     
     <string name="title_activity_list_words">ListWords</string>
     <string name="button_view">View words</string>
+    <string name="button_play">Play</string>
 
 </resources>

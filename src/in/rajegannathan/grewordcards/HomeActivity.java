@@ -7,23 +7,54 @@ import java.util.logging.Logger;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 
 public class HomeActivity extends Activity {
 
 	private static final Logger logger = Logger.getLogger(HomeActivity.class
 			.getName());
+	private EditText wordTextBox = null;
+	private Button addWordsButton;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
+
+		addWordsButton = (Button) findViewById(R.id.button_add);
+		addWordsButton.setEnabled(false);
+
+		wordTextBox = (EditText) findViewById(R.id.add_word);
+		wordTextBox.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				if (addWordsButton.getText().toString().trim().length() != 0) {
+					addWordsButton.setEnabled(true);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -45,15 +76,22 @@ public class HomeActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	public void viewWords(View view){
-        Intent intent = new Intent(this, ListWordsActivity.class);
-        startActivity(intent);
+
+	public void viewWords(View view) {
+		Intent intent = new Intent(this, ListWordsActivity.class);
+		startActivity(intent);
+	}
+
+	public void parentClick(View view) {
+		logger.info("in parent click");
+		hideSoftInput();
 	}
 
 	public void addWord(View view) {
-		EditText wordTextBox = (EditText) findViewById(R.id.add_word);
 		String newWord = wordTextBox.getText().toString();
+		if (newWord.trim().length() == 0) {
+			return;
+		}
 		logger.info("in add Word " + newWord);
 
 		DBHelper mDbHelper = new DBHelper(getApplicationContext());
@@ -66,5 +104,15 @@ public class HomeActivity extends Activity {
 
 		db.insert(Wordcard.TABLE_NAME, null, values);
 		logger.info("word inserted successfully");
+		wordTextBox.setText("");
+		hideSoftInput();
+	}
+
+	private void hideSoftInput() {
+		InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+		inputManager.hideSoftInputFromWindow((null == getCurrentFocus()) ? null
+				: getCurrentFocus().getWindowToken(),
+				InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 }
