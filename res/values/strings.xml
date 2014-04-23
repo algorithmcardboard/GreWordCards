@@ -11,7 +11,6 @@
     <string name="button_view">View words</string>
     <string name="button_play">Play</string>
     <string name="title_activity_flash_card">FlashCardActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="word_content">contoure</string>
 
 </resources>
