@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:onClick="viewWords"
+        android:onClick="playFlashCards"
         android:paddingBottom="1dp"
         android:text="@string/button_play" />
 

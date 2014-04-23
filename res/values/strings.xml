@@ -7,9 +7,11 @@
     <string name="word_context_menu_title">Delete</string>
     <string name="add_word">Enter a word</string>
     <string name="button_add">Add Word</string>
-    
     <string name="title_activity_list_words">ListWords</string>
     <string name="button_view">View words</string>
     <string name="button_play">Play</string>
+    <string name="title_activity_flash_card">FlashCardActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

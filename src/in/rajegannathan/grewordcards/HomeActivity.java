@@ -87,6 +87,11 @@ public class HomeActivity extends Activity {
 		Intent intent = new Intent(this, ListWordsActivity.class);
 		startActivity(intent);
 	}
+	
+	public void playFlashCards(View view) {
+		Intent intent = new Intent(this, FlashCardActivity.class);
+		startActivity(intent);
+	}
 
 	public void parentClick(View view) {
 		logger.info("in parent click");

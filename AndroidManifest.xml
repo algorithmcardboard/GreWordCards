@@ -31,6 +31,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.rajegannathan.grewordcards.HomeActivity" />
         </activity>
+        <activity
+            android:name="in.rajegannathan.grewordcards.FlashCardActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_flash_card"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
     </application>
 
 </manifest>
