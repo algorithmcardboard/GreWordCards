@@ -35,7 +35,9 @@ public class FlashCardActivity extends Activity {
 		}
 
 		private static final EnumSet<Fragments> allFragments = EnumSet.allOf(Fragments.class);
-
+		public static final Fragments LAST_FRAGMENT = DerivativeScreen;
+		public static final Fragments FIRST_FRAGMENT = WordScreen;
+		
 		public static final int TOTAL_FRAGMENTS = allFragments.size();
 
 		public String getName() {
@@ -79,7 +81,11 @@ public class FlashCardActivity extends Activity {
 	};
 
 	private void movePrevious() {
+		int oldScreen = currentScreen;
 		currentScreen = (currentScreen - 1 + Fragments.TOTAL_FRAGMENTS) % Fragments.TOTAL_FRAGMENTS;
+		if(oldScreen == Fragments.FIRST_FRAGMENT.position && currentScreen == Fragments.LAST_FRAGMENT.position){
+			currentScreen = Fragments.FIRST_FRAGMENT.position;
+		}
 		logger.info("CurrentScreen " + currentScreen + " current fragment " + Fragments.getFragment(currentScreen));
 	}
 
