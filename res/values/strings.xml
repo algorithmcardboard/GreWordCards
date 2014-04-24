@@ -11,6 +11,6 @@
     <string name="button_view">View words</string>
     <string name="button_play">Play</string>
     <string name="title_activity_flash_card">FlashCardActivity</string>
-    <string name="helper_text">Double tap for next. Swipe for details</string>
+    <string name="word_fragment_default">Default Word</string>
 
 </resources>

@@ -7,8 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:onClick="parentClick"
-    tools:context="in.rajegannathan.grewordcards.HomeActivity$PlaceholderFragment" >
+    android:onClick="parentClick" >
 
     <EditText
         android:id="@+id/add_word"
