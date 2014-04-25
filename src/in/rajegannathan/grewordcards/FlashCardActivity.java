@@ -78,11 +78,12 @@ public class FlashCardActivity extends Activity {
 	private DBHelper mDbHelper;
 	private Cursor cursor;
 
-	private boolean swiped = true, reachedEnd = false, reachedBeginning = true;
+	private boolean swiped = true;
 
 	GestureDetector gestureDetector;
 	private int currentScreen = 0;
 	private static final Logger logger = Logger.getLogger(FlashCardActivity.class.getName());
+//	private static final String MESSAGE_CURRENT_WORD = "in.rajegannathan.grewordcards.CURRENT_WORD";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +115,7 @@ public class FlashCardActivity extends Activity {
 		cursor = getCursorForListView();
 		
 		if(!cursor.isAfterLast()){
-			wordFragment.setText(cursor.getString(1));
+			wordFragment.setCurrentWord(cursor.getString(1));
 			changeFragment(wordFragment);
 		}
 //		cursor.moveToPrevious();
@@ -170,8 +171,6 @@ public class FlashCardActivity extends Activity {
 			cursor.moveToPrevious();
 			if (!cursor.isBeforeFirst()) {
 				wordFragment.setCurrentWord(cursor.getString(1));
-			} else {
-				wordFragment.printViews();
 			}
 		}
 		changeFragment(getFragment(currentScreen));
@@ -185,13 +184,13 @@ public class FlashCardActivity extends Activity {
 		logger.info("CurrentScreen " + currentScreen + " current fragment " + Fragments.getFragment(currentScreen));
 
 		if (currentScreen == Fragments.FIRST_FRAGMENT.position) {
-			nextWord(false);
+			nextWord();
 		} else {
 			changeFragment(getFragment(currentScreen));
 		}
 	}
 
-	private void nextWord(boolean doubleTap) {
+	private void nextWord() {
 		logger.info("in next word");
 		cursor.moveToNext();
 		if (cursor.isAfterLast()) {
@@ -200,12 +199,15 @@ public class FlashCardActivity extends Activity {
 		}
 		currentScreen = Fragments.FIRST_FRAGMENT.position;
 		
-		if(doubleTap){
-			wordFragment.setCurrentWord(cursor.getString(1));
-		}else{			
-			wordFragment.setText(cursor.getString(1));
-		}
+		wordFragment.setCurrentWord(cursor.getString(1));
 		changeFragment(getFragment(currentScreen));
+		populateWordDetails(cursor.getString(1));
+	}
+
+	private void populateWordDetails(String word) {		
+//		Intent intent = new Intent(FlashCardActivity.this, WordnikService.class);
+//		intent.putExtra(MESSAGE_CURRENT_WORD, word);
+//		FlashCardActivity.this.startService(intent);
 	}
 
 	class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -220,7 +222,7 @@ public class FlashCardActivity extends Activity {
 				cursor.moveToFirst();
 			}
 			if(!cursor.isAfterLast()){
-				nextWord(true);
+				nextWord();
 			}
 			return super.onDoubleTap(e);
 		};
