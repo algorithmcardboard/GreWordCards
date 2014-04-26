@@ -99,8 +99,8 @@ public class HomeActivity extends Activity {
 	}
 
 	public void addWord(View view) {
-		String newWord = wordTextBox.getText().toString();
-		if (newWord.trim().length() == 0) {
+		String newWord = wordTextBox.getText().toString().trim();
+		if (newWord.length() == 0) {
 			return;
 		}
 		logger.info("in add Word " + newWord);

@@ -15,23 +15,23 @@ public class BoundaryFragment extends Fragment {
 	
 	private static final Logger logger = Logger.getLogger(BoundaryFragment.class.getName());
 	private TextView wordText;
+	private View v;
+	private String currentBoundaryText = "";
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		logger.info("in oncreateView of boundary fragment");
-		View v = inflater.inflate(R.layout.boundary_fragment, container, false);
+		v = inflater.inflate(R.layout.boundary_fragment, container, false);
 		wordText = (TextView) v.findViewById(R.id.boundary_fragment_text);
+		wordText.setText(currentBoundaryText);
 		return v;
 	}
 
-	public void reachedEnd() {
-		wordText.setTypeface(Typeface.DEFAULT);
-		wordText.setText("Reached the end of your list. Swipe up for previous words.");
-	}
-
-	public void reachedStart() {
-		wordText.setTypeface(Typeface.DEFAULT);
-		wordText.setText("Reached the end of your list. Swipe up for previous words.");
+	public void setText(String currentBoundaryText) {
+		this.currentBoundaryText = currentBoundaryText;
+		if(v != null){
+			wordText.setText(currentBoundaryText);
+		}
 	}
 
 }

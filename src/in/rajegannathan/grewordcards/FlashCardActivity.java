@@ -158,10 +158,13 @@ public class FlashCardActivity extends Activity {
 			wordFragment.setCurrentWord(cursor.getString(1));
 			logger.info("swapping to wordFragment" + cursor.getString(1));
 			changeFragment(wordFragment);
+			wdd.start();
+		}else{
+			logger.info("changing boundaryfragment text");
+			boundaryFragment.setText("No words added.");
 		}
 
 		logger.info("main activity thread is "+Thread.currentThread().getId());
-		wdd.start();
 		super.onPostCreate(savedInstanceState);
 	}
 

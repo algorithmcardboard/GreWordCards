@@ -1,5 +1,6 @@
 package in.rajegannathan.grewordcards.async;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import android.os.Handler;
@@ -8,6 +9,8 @@ import android.os.Message;
 
 import com.wordnik.client.api.WordApi;
 import com.wordnik.client.common.ApiException;
+import com.wordnik.client.model.Definition;
+import com.wordnik.client.model.WordObject;
 
 public class WordDetailsDownloader extends Thread {
 
@@ -27,8 +30,7 @@ public class WordDetailsDownloader extends Thread {
 
 	public WordDetailsDownloader(Handler uiHandler) {
 		this.uiHandler = uiHandler;
-		wordAPI.getInvoker().addDefaultHeader("api_key", "API_KEY");
-//		wordAPI.addHeader("api_key", "f202890d818b6b25a3b0e000a700f2032187316965dabaeaf");
+		wordAPI.getInvoker().addDefaultHeader("api_key", "f202890d818b6b25a3b0e000a700f2032187316965dabaeaf");
 	}
 
 	@Override
@@ -44,7 +46,10 @@ public class WordDetailsDownloader extends Thread {
 				logger.info("in downloadThread's handle message" + msg.obj.toString());
 				try {
 					long startTime = System.currentTimeMillis();
-					wordAPI.getDefinitions(word, null, null, null, null, null, null);
+					List<Definition> definitions = wordAPI.getDefinitions(word, null, null, null, null, null, null);
+					for(Definition defn : definitions){
+						logger.info("defn: "+definitions.get(0).getText());
+					}
 					logger.info("Time taken for "+ word +" is " +(System.currentTimeMillis() - startTime));
 				} catch (ApiException e) {
 					e.printStackTrace();
@@ -83,7 +88,9 @@ public class WordDetailsDownloader extends Thread {
 	public void fetchDetails(String word) {
 		Message message = Message.obtain();
 		message.obj = word;
-		downloadHandler.sendMessage(message);
+		if(downloadHandler != null){
+			downloadHandler.sendMessage(message);
+		}
 	}
 
 	public void quit() {
