@@ -1,6 +1,7 @@
 package in.rajegannathan.grewordcards;
 
 import in.rajegannathan.grewordcards.DatabaseContract.Wordcard;
+import in.rajegannathan.grewordcards.async.WordDetailsDownloader;
 import in.rajegannathan.grewordcards.fragments.BoundaryFragment;
 import in.rajegannathan.grewordcards.fragments.DerivativeFragment;
 import in.rajegannathan.grewordcards.fragments.EtymologyFragment;
@@ -19,6 +20,9 @@ import android.app.FragmentTransaction;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.BaseColumns;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -82,16 +86,23 @@ public class FlashCardActivity extends Activity {
 
 	GestureDetector gestureDetector;
 	private int currentScreen = 0;
+	private boolean interrupt = true;
+	private WordDetailsDownloader wdd;
+	private Handler mHandler;
 	private static final Logger logger = Logger.getLogger(FlashCardActivity.class.getName());
-//	private static final String MESSAGE_CURRENT_WORD = "in.rajegannathan.grewordcards.CURRENT_WORD";
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_flash_card);
-		boundaryFragment = new BoundaryFragment();
-		changeFragment(boundaryFragment);
-		this.gestureDetector = new GestureDetector(getApplicationContext(), new MyGestureListener());
+	private void handleWordMessage(Message msg) {
+		switch (msg.what) {
+		case WordDetailsDownloader.INITIALIZED:
+			logger.info("initialized");
+			break;
+		case WordDetailsDownloader.MEANING:
+		case WordDetailsDownloader.DERIVATIVE:
+		case WordDetailsDownloader.ETYMOLOGY:
+		case WordDetailsDownloader.USAGE:
+			logger.info("in other details");
+			break;
+		}
 	}
 
 	private Cursor getCursorForListView() {
@@ -101,6 +112,31 @@ public class FlashCardActivity extends Activity {
 		Cursor cursor = db.query(Wordcard.TABLE_NAME, projection, null, null, null, null, sortOrder);
 		cursor.moveToFirst();
 		return cursor;
+	}
+	
+	@Override
+	protected void onDestroy() {
+		logger.info("in ondestroy. interrupting thread "+ Thread.currentThread().getId());
+		wdd.stopProcessing();
+		super.onDestroy();
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_flash_card);
+		boundaryFragment = new BoundaryFragment();
+		changeFragment(boundaryFragment);
+		this.gestureDetector = new GestureDetector(getApplicationContext(), new MyGestureListener());
+		mHandler = new Handler(Looper.getMainLooper()) {
+			@Override
+			public void handleMessage(Message msg) {
+				logger.info("in ui handler " + msg.obj.toString());
+				handleWordMessage(msg);
+			}
+			
+		};
+		wdd = new WordDetailsDownloader(mHandler);
 	}
 
 	@Override
@@ -114,12 +150,18 @@ public class FlashCardActivity extends Activity {
 		mDbHelper = new DBHelper(getApplicationContext());
 		cursor = getCursorForListView();
 		
-		if(!cursor.isAfterLast()){
+		logger.info("in postcreate" + cursor.getCount());
+
+		if (cursor.getCount() != 0) {
+			interrupt = false;
+			
 			wordFragment.setCurrentWord(cursor.getString(1));
+			logger.info("swapping to wordFragment" + cursor.getString(1));
 			changeFragment(wordFragment);
 		}
-//		cursor.moveToPrevious();
 
+		logger.info("main activity thread is "+Thread.currentThread().getId());
+		wdd.start();
 		super.onPostCreate(savedInstanceState);
 	}
 
@@ -170,6 +212,7 @@ public class FlashCardActivity extends Activity {
 		if (currentScreen == Fragments.FIRST_FRAGMENT.position) {
 			cursor.moveToPrevious();
 			if (!cursor.isBeforeFirst()) {
+				populateWordDetails(cursor.getString(1));
 				wordFragment.setCurrentWord(cursor.getString(1));
 			}
 		}
@@ -177,7 +220,7 @@ public class FlashCardActivity extends Activity {
 	}
 
 	private void showNextFragment() {
-		if(cursor.isBeforeFirst()){
+		if (cursor.isBeforeFirst()) {
 			cursor.moveToFirst();
 		}
 		currentScreen = (currentScreen + 1) % Fragments.TOTAL_FRAGMENTS;
@@ -198,16 +241,13 @@ public class FlashCardActivity extends Activity {
 			return;
 		}
 		currentScreen = Fragments.FIRST_FRAGMENT.position;
-		
 		wordFragment.setCurrentWord(cursor.getString(1));
 		changeFragment(getFragment(currentScreen));
 		populateWordDetails(cursor.getString(1));
 	}
 
-	private void populateWordDetails(String word) {		
-//		Intent intent = new Intent(FlashCardActivity.this, WordnikService.class);
-//		intent.putExtra(MESSAGE_CURRENT_WORD, word);
-//		FlashCardActivity.this.startService(intent);
+	private void populateWordDetails(String word) {
+		wdd.fetchDetails(word);
 	}
 
 	class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -218,10 +258,13 @@ public class FlashCardActivity extends Activity {
 
 		@Override
 		public boolean onDoubleTap(MotionEvent e) {
-			if(cursor.isBeforeFirst()){
+			if (interrupt) {
+				return false;
+			}
+			if (cursor.isBeforeFirst()) {
 				cursor.moveToFirst();
 			}
-			if(!cursor.isAfterLast()){
+			if (!cursor.isAfterLast()) {
 				nextWord();
 			}
 			return super.onDoubleTap(e);
@@ -230,6 +273,10 @@ public class FlashCardActivity extends Activity {
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			logger.info("in fling event");
+
+			if (interrupt) {
+				return false;
+			}
 
 			if (Math.abs(e1.getX() - e2.getX()) > SWIPE_MAX_OFF_PATH) {
 				logger.info("in swipe max off path");
