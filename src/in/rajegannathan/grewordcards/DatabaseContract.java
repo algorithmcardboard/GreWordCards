@@ -13,8 +13,8 @@ public class DatabaseContract {
 	private static final String COMMA_SEP = ",";
 	private static final String INTEGER_TYPE = " INTEGER";
 
-	public static final class Wordcard implements BaseColumns {
-		private Wordcard() {
+	public static final class Words implements BaseColumns {
+		private Words() {
 		}
 
 		public static final String COLUMN_ID = BaseColumns._ID;
@@ -29,7 +29,8 @@ public class DatabaseContract {
 				+ COLUMN_WORD + TEXT_TYPE + COMMA_SEP 
 				+ COLUMN_VIEWS + INTEGER_TYPE + COMMA_SEP
 				+ COLUMN_CREATED_AT + INTEGER_TYPE + COMMA_SEP
-				+ COLUMN_UPDATED_AT + INTEGER_TYPE + " )";
+				+ COLUMN_UPDATED_AT + INTEGER_TYPE + COMMA_SEP
+				+ "UNIQUE("+ COLUMN_WORD+") ON CONFLICT REPLACE )";
 
 		public static final String DELETE_TABLE_SQL = "DROP TABLE IF EXISTS "
 				+ TABLE_NAME;

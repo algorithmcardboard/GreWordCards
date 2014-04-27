@@ -1,6 +1,6 @@
 package in.rajegannathan.grewordcards;
 
-import in.rajegannathan.grewordcards.DatabaseContract.Wordcard;
+import in.rajegannathan.grewordcards.DatabaseContract.Words;
 import in.rajegannathan.grewordcards.localdb.DBHelper;
 
 import java.util.logging.Logger;
@@ -108,12 +108,12 @@ public class HomeActivity extends Activity {
 		DBHelper mDbHelper = new DBHelper(getApplicationContext());
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
-		values.put(Wordcard.COLUMN_WORD, newWord);
-		values.put(Wordcard.COLUMN_VIEWS, 0);
-		values.put(Wordcard.COLUMN_CREATED_AT, System.currentTimeMillis());
-		values.put(Wordcard.COLUMN_UPDATED_AT, System.currentTimeMillis());
+		values.put(Words.COLUMN_WORD, newWord);
+		values.put(Words.COLUMN_VIEWS, 0);
+		values.put(Words.COLUMN_CREATED_AT, System.currentTimeMillis());
+		values.put(Words.COLUMN_UPDATED_AT, System.currentTimeMillis());
 
-		db.insert(Wordcard.TABLE_NAME, null, values);
+		db.insert(Words.TABLE_NAME, null, values);
 		logger.info("word inserted successfully");
 		wordTextBox.setText("");
 		addWordsButton.setText("Added '"+newWord+"'");

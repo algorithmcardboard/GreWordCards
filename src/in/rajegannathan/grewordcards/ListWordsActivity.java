@@ -1,6 +1,6 @@
 package in.rajegannathan.grewordcards;
 
-import in.rajegannathan.grewordcards.DatabaseContract.Wordcard;
+import in.rajegannathan.grewordcards.DatabaseContract.Words;
 import in.rajegannathan.grewordcards.localdb.DBHelper;
 
 import java.util.logging.Logger;
@@ -27,10 +27,10 @@ public class ListWordsActivity extends ListActivity {
 	
 	private Cursor getCursorForListView(){
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
-		String[] projection = { BaseColumns._ID, Wordcard.COLUMN_WORD,
-				Wordcard.COLUMN_VIEWS };
-		String sortOrder = Wordcard.COLUMN_WORD + " ASC";
-		Cursor cursor = db.query(Wordcard.TABLE_NAME, projection, null, null,
+		String[] projection = { BaseColumns._ID, Words.COLUMN_WORD,
+				Words.COLUMN_VIEWS };
+		String sortOrder = Words.COLUMN_WORD + " ASC";
+		Cursor cursor = db.query(Words.TABLE_NAME, projection, null, null,
 				null, null, sortOrder);
 		return cursor;
 	}
@@ -41,7 +41,7 @@ public class ListWordsActivity extends ListActivity {
 
 		mDbHelper = new DBHelper(getApplicationContext());
 
-		String[] fromColumns = { Wordcard.COLUMN_WORD };
+		String[] fromColumns = { Words.COLUMN_WORD };
 		int[] toViews = { R.id.singleWord };
 		
 		Cursor cursor = getCursorForListView();
@@ -84,7 +84,7 @@ public class ListWordsActivity extends ListActivity {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		logger.info("selected item is at "+info.id);
 		SQLiteDatabase db = mDbHelper.getWritableDatabase();
-		db.delete(Wordcard.TABLE_NAME, Wordcard.COLUMN_ID+" = ?", new String[]{"" +info.id});
+		db.delete(Words.TABLE_NAME, Words.COLUMN_ID+" = ?", new String[]{"" +info.id});
 		
 		Cursor cursor = getCursorForListView();
 		mAdapter.changeCursor(cursor);

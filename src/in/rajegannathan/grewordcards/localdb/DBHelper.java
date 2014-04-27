@@ -1,7 +1,7 @@
 package in.rajegannathan.grewordcards.localdb;
 
 import in.rajegannathan.grewordcards.DatabaseContract;
-import in.rajegannathan.grewordcards.DatabaseContract.Wordcard;
+import in.rajegannathan.grewordcards.DatabaseContract.Words;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
@@ -20,12 +20,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL(Wordcard.CREATE_TABLE_SQL);
+		db.execSQL(Words.CREATE_TABLE_SQL);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL(Wordcard.DELETE_TABLE_SQL);
+		db.execSQL(Words.DELETE_TABLE_SQL);
 		onCreate(db);
 	}
 

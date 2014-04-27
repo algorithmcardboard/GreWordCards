@@ -1,6 +1,6 @@
 package in.rajegannathan.grewordcards;
 
-import in.rajegannathan.grewordcards.DatabaseContract.Wordcard;
+import in.rajegannathan.grewordcards.DatabaseContract.Words;
 import in.rajegannathan.grewordcards.async.WordDetailsDownloader;
 import in.rajegannathan.grewordcards.fragments.BoundaryFragment;
 import in.rajegannathan.grewordcards.fragments.DerivativeFragment;
@@ -107,9 +107,9 @@ public class FlashCardActivity extends Activity {
 
 	private Cursor getCursorForListView() {
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
-		String[] projection = { BaseColumns._ID, Wordcard.COLUMN_WORD, Wordcard.COLUMN_VIEWS };
-		String sortOrder = Wordcard.COLUMN_VIEWS + " ASC";
-		Cursor cursor = db.query(Wordcard.TABLE_NAME, projection, null, null, null, null, sortOrder);
+		String[] projection = { BaseColumns._ID, Words.COLUMN_WORD, Words.COLUMN_VIEWS };
+		String sortOrder = Words.COLUMN_VIEWS + " ASC";
+		Cursor cursor = db.query(Words.TABLE_NAME, projection, null, null, null, null, sortOrder);
 		cursor.moveToFirst();
 		return cursor;
 	}
