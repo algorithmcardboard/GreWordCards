@@ -1,5 +1,6 @@
 package in.rajegannathan.grewordcards.async;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -10,7 +11,6 @@ import android.os.Message;
 import com.wordnik.client.api.WordApi;
 import com.wordnik.client.common.ApiException;
 import com.wordnik.client.model.Definition;
-import com.wordnik.client.model.WordObject;
 
 public class WordDetailsDownloader extends Thread {
 
@@ -47,8 +47,11 @@ public class WordDetailsDownloader extends Thread {
 				try {
 					long startTime = System.currentTimeMillis();
 					List<Definition> definitions = wordAPI.getDefinitions(word, null, null, null, null, null, null);
+					if(definitions == null){
+						definitions = new ArrayList<Definition>();
+					}
 					for(Definition defn : definitions){
-						logger.info("defn: "+definitions.get(0).getText());
+						logger.info("defn: "+defn.getText());
 					}
 					logger.info("Time taken for "+ word +" is " +(System.currentTimeMillis() - startTime));
 				} catch (ApiException e) {

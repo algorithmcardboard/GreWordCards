@@ -23,16 +23,22 @@ public class DatabaseContract {
 		public static final String COLUMN_VIEWS = "views";
 		public static final String COLUMN_CREATED_AT = "created_at";
 		public static final String COLUMN_UPDATED_AT = "updated_at";
-		
-		public static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE_NAME
-				+ " (" + BaseColumns._ID + INTEGER_TYPE + " PRIMARY KEY AUTOINCREMENT NOT NULL, "
-				+ COLUMN_WORD + TEXT_TYPE + COMMA_SEP 
-				+ COLUMN_VIEWS + INTEGER_TYPE + COMMA_SEP
-				+ COLUMN_CREATED_AT + INTEGER_TYPE + COMMA_SEP
-				+ COLUMN_UPDATED_AT + INTEGER_TYPE + COMMA_SEP
-				+ "UNIQUE("+ COLUMN_WORD+") ON CONFLICT REPLACE )";
+
+		public static final String CREATE_TABLE_SQL = "CREATE TABLE "
+				+ TABLE_NAME + " (" + BaseColumns._ID + INTEGER_TYPE
+				+ " PRIMARY KEY AUTOINCREMENT NOT NULL, " + COLUMN_WORD
+				+ TEXT_TYPE + COMMA_SEP + COLUMN_VIEWS + INTEGER_TYPE
+				+ COMMA_SEP + COLUMN_CREATED_AT + INTEGER_TYPE + COMMA_SEP
+				+ COLUMN_UPDATED_AT + INTEGER_TYPE + COMMA_SEP + "UNIQUE("
+				+ COLUMN_WORD + ") )";
 
 		public static final String DELETE_TABLE_SQL = "DROP TABLE IF EXISTS "
 				+ TABLE_NAME;
+		public static final String INSERT_SQL = "INSERT OR REPLACE INTO "
+				+ TABLE_NAME + " ( " + COLUMN_WORD + COMMA_SEP
+				+ COLUMN_CREATED_AT + COMMA_SEP + COLUMN_UPDATED_AT + COMMA_SEP
+				+ COLUMN_VIEWS + ")"
+				+ "VALUES (?, ?, ? , COALESCE((SELECT views+1 FROM " + TABLE_NAME
+				+ "  WHERE " + COLUMN_WORD + " = ?), '1')) ";
 	}
 }
