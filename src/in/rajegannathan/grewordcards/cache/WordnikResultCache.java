@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 
 public class WordnikResultCache {
 
-	private static final int NTHREADS = 8;
+	public static final int NTHREADS = 8;
 
 	ExecutorService executor = Executors.newFixedThreadPool(NTHREADS);
 

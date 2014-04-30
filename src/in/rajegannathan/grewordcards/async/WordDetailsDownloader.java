@@ -20,7 +20,7 @@ public class WordDetailsDownloader extends Thread {
 	public static final int PROCESSED_ALL = MEANING * USAGE * ETYMOLOGY
 			* DERIVATIVE;
 
-	private volatile boolean skipCurrentWord = false;
+	private volatile int stackSize = 0;
 
 	private Handler uiHandler;
 	private Handler downloadHandler;
@@ -46,10 +46,13 @@ public class WordDetailsDownloader extends Thread {
 			@Override
 			public void handleMessage(Message msg) {
 				quitIfInterrupted();
-				skipCurrentWord = false;
+				stackSize--;
+				if(stackSize > WordnikResultCache.NTHREADS){
+					return;
+				}
 				int processStatus = 1;
 				String word = msg.obj.toString();
-				while (!skipCurrentWord || processStatus % PROCESSED_ALL == 0) {
+				while (stackSize == 0 && processStatus % PROCESSED_ALL != 0) {
 					WordnikCacheObject cacheObject = wrc.getWordnikCacheObject(word);
 					if (cacheObject.getMeaning() != null
 							&& processStatus % MEANING != 0) {
@@ -119,7 +122,7 @@ public class WordDetailsDownloader extends Thread {
 		if (downloadHandler != null) {
 			downloadHandler.sendMessage(message);
 		}
-		skipCurrentWord = true;
+		stackSize++;
 	}
 
 	public void quit() {
