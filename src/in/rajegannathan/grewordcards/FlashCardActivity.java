@@ -95,6 +95,7 @@ public class FlashCardActivity extends Activity {
 		switch (msg.what) {
 		case WordDetailsDownloader.INITIALIZED:
 			logger.info("initialized");
+			populateWordDetails(cursor.getString(1));
 			break;
 		case WordDetailsDownloader.MEANING:
 		case WordDetailsDownloader.DERIVATIVE:

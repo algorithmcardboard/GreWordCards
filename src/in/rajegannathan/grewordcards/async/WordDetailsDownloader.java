@@ -1,74 +1,98 @@
 package in.rajegannathan.grewordcards.async;
 
-import java.util.ArrayList;
-import java.util.List;
+import in.rajegannathan.grewordcards.cache.WordnikResultCache;
+import in.rajegannathan.grewordcards.models.WordnikCacheObject;
+
 import java.util.logging.Logger;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import com.wordnik.client.api.WordApi;
-import com.wordnik.client.common.ApiException;
-import com.wordnik.client.model.Definition;
-
 public class WordDetailsDownloader extends Thread {
 
 	public static final int INITIALIZED = 0;
-	public static final int MEANING = 1;
-	public static final int USAGE = 4;
-	public static final int ETYMOLOGY = 3;
-	public static final int DERIVATIVE = 2;
-	
+	public static final int MEANING = 2;
+	public static final int USAGE = 3;
+	public static final int ETYMOLOGY = 5;
+	public static final int DERIVATIVE = 7;
+
+	public static final int PROCESSED_ALL = MEANING * USAGE * ETYMOLOGY
+			* DERIVATIVE;
+
+	private volatile boolean skipCurrentWord = false;
+
 	private Handler uiHandler;
 	private Handler downloadHandler;
 	private boolean handlerInitialized = false;
-	
-	private WordApi wordAPI = new WordApi();
-	
-	private static final Logger logger = Logger.getLogger(WordDetailsDownloader.class.getName());
+	private WordnikResultCache wrc = WordnikResultCache.getInstance();
+
+	private static final Logger logger = Logger
+			.getLogger(WordDetailsDownloader.class.getName());
+	protected static final long DOWNLOADER_SLEEP_TIME = 100;
 
 	public WordDetailsDownloader(Handler uiHandler) {
 		this.uiHandler = uiHandler;
-		wordAPI.getInvoker().addDefaultHeader("api_key", "f202890d818b6b25a3b0e000a700f2032187316965dabaeaf");
+		// wordAPI.getInvoker().addDefaultHeader("api_key",
+		// "f202890d818b6b25a3b0e000a700f2032187316965dabaeaf");
 	}
 
 	@Override
 	public void run() {
-		logger.info(Thread.currentThread().getId()+"");
+		logger.info(Thread.currentThread().getId() + "");
 		Looper.prepare();
 		logger.info("in WordDetailsDownloader's new thread");
 		downloadHandler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
 				quitIfInterrupted();
+				skipCurrentWord = false;
+				int processStatus = 1;
 				String word = msg.obj.toString();
-				logger.info("in downloadThread's handle message" + msg.obj.toString());
-				try {
-					long startTime = System.currentTimeMillis();
-					List<Definition> definitions = wordAPI.getDefinitions(word, null, null, null, null, null, null);
-					if(definitions == null){
-						definitions = new ArrayList<Definition>();
+				while (!skipCurrentWord || processStatus % PROCESSED_ALL == 0) {
+					WordnikCacheObject wordDetails = wrc.getWordDetails(word);
+					if (wordDetails.getMeaning() != null
+							&& processStatus % MEANING != 0) {
+						processStatus = processStatus * MEANING;
+						dispatchToUiQueue(wordDetails.getMeaning()
+								.getDisplayText(), MEANING);
 					}
-					for(Definition defn : definitions){
-						logger.info("defn: "+defn.getText());
+					if (wordDetails.getDerivative() != null
+							&& processStatus % DERIVATIVE != 0) {
+						processStatus = processStatus * DERIVATIVE;
+						dispatchToUiQueue(wordDetails.getDerivative()
+								.getDisplayText(), MEANING);
 					}
-					logger.info("Time taken for "+ word +" is " +(System.currentTimeMillis() - startTime));
-				} catch (ApiException e) {
-					e.printStackTrace();
+					if (wordDetails.getEtymology() != null
+							&& processStatus % ETYMOLOGY != 0) {
+						processStatus = processStatus * ETYMOLOGY;
+						dispatchToUiQueue(wordDetails.getEtymology()
+								.getDisplayText(), MEANING);
+					}
+					if (wordDetails.getUsage() != null
+							&& processStatus % USAGE != 0) {
+						processStatus = processStatus * USAGE;
+						dispatchToUiQueue(wordDetails.getUsage()
+								.getDisplayText(), MEANING);
+					}
+					try {
+						Thread.sleep(DOWNLOADER_SLEEP_TIME);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
-				dispatchToUiQueue("downloaded " + msg.obj.toString());
+				logger.info("in downloadThread's handle message" + word);
 			}
 
 			private void quitIfInterrupted() {
-				if(isInterrupted()){
+				if (isInterrupted()) {
 					logger.info("quitting looper");
 					Looper.myLooper().quit();
 					return;
 				}
 			}
 		};
-		if(!handlerInitialized){
+		if (!handlerInitialized) {
 			sendInitializedMessage();
 		}
 		Looper.loop();
@@ -82,22 +106,24 @@ public class WordDetailsDownloader extends Thread {
 		uiHandler.sendMessage(message);
 	}
 
-	private void dispatchToUiQueue(String string) {
+	private void dispatchToUiQueue(String string, int what) {
 		Message message = Message.obtain();
 		message.obj = string;
+		message.what = what;
 		uiHandler.sendMessage(message);
 	}
 
 	public void fetchDetails(String word) {
 		Message message = Message.obtain();
 		message.obj = word;
-		if(downloadHandler != null){
+		if (downloadHandler != null) {
 			downloadHandler.sendMessage(message);
 		}
+		skipCurrentWord = true;
 	}
 
 	public void quit() {
-		logger.info(Thread.currentThread().getId()+"");
+		logger.info(Thread.currentThread().getId() + "");
 	}
 
 	public void stopProcessing() {
