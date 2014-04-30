@@ -29,7 +29,7 @@ public class WordDetailsDownloader extends Thread {
 
 	private static final Logger logger = Logger
 			.getLogger(WordDetailsDownloader.class.getName());
-	protected static final long DOWNLOADER_SLEEP_TIME = 100;
+	protected static final long DOWNLOADER_SLEEP_TIME = 200;
 
 	public WordDetailsDownloader(Handler uiHandler) {
 		this.uiHandler = uiHandler;
@@ -50,29 +50,29 @@ public class WordDetailsDownloader extends Thread {
 				int processStatus = 1;
 				String word = msg.obj.toString();
 				while (!skipCurrentWord || processStatus % PROCESSED_ALL == 0) {
-					WordnikCacheObject wordDetails = wrc.getWordDetails(word);
-					if (wordDetails.getMeaning() != null
+					WordnikCacheObject cacheObject = wrc.getWordnikCacheObject(word);
+					if (cacheObject.getMeaning() != null
 							&& processStatus % MEANING != 0) {
 						processStatus = processStatus * MEANING;
-						dispatchToUiQueue(wordDetails.getMeaning()
+						dispatchToUiQueue(cacheObject.getMeaning()
 								.getDisplayText(), MEANING);
 					}
-					if (wordDetails.getDerivative() != null
+					if (cacheObject.getDerivative() != null
 							&& processStatus % DERIVATIVE != 0) {
 						processStatus = processStatus * DERIVATIVE;
-						dispatchToUiQueue(wordDetails.getDerivative()
+						dispatchToUiQueue(cacheObject.getDerivative()
 								.getDisplayText(), MEANING);
 					}
-					if (wordDetails.getEtymology() != null
+					if (cacheObject.getEtymology() != null
 							&& processStatus % ETYMOLOGY != 0) {
 						processStatus = processStatus * ETYMOLOGY;
-						dispatchToUiQueue(wordDetails.getEtymology()
+						dispatchToUiQueue(cacheObject.getEtymology()
 								.getDisplayText(), MEANING);
 					}
-					if (wordDetails.getUsage() != null
+					if (cacheObject.getUsage() != null
 							&& processStatus % USAGE != 0) {
 						processStatus = processStatus * USAGE;
-						dispatchToUiQueue(wordDetails.getUsage()
+						dispatchToUiQueue(cacheObject.getUsage()
 								.getDisplayText(), MEANING);
 					}
 					try {

@@ -28,9 +28,17 @@ public class WordnikResultCache {
 		return resultCache;
 	}
 
-	public WordnikCacheObject getWordDetails(String word){
+	public WordnikCacheObject getWordnikCacheObject(String word){
 		if(cache.get(word) == null){
-			cache.put(word, new WordnikCacheObject(word));
+			final WordnikCacheObject cacheObject = new WordnikCacheObject(word);
+			cache.put(word, cacheObject);
+			executor.execute(new Runnable() {
+				
+				@Override
+				public void run() {
+					cacheObject.populateWordDetails();
+				}
+			});
 		}
 		return cache.get(word);
 	}
