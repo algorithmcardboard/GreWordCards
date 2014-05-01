@@ -33,8 +33,6 @@ public class WordDetailsDownloader extends Thread {
 
 	public WordDetailsDownloader(Handler uiHandler) {
 		this.uiHandler = uiHandler;
-		// wordAPI.getInvoker().addDefaultHeader("api_key",
-		// "f202890d818b6b25a3b0e000a700f2032187316965dabaeaf");
 	}
 
 	@Override

@@ -9,6 +9,7 @@ public class MeaningDownloader implements Callable<MeaningDTO>{
 	
 	private static final Logger logger = Logger.getLogger(MeaningDownloader.class.getName());
 	private String word;
+	private WordnikDownloader downloader = new WordnikDownloader();
 	
 	@SuppressWarnings("unused")
 	private MeaningDownloader(){}
@@ -19,10 +20,9 @@ public class MeaningDownloader implements Callable<MeaningDTO>{
 
 	@Override
 	public MeaningDTO call() throws Exception {
-		logger.info("in MeaningDownloader.  About to sleep for 300 milliseconds");
-		Thread.sleep(300L);
+		logger.info("in MeaningDownloader.  About to sleep for 300 milliseconds"+downloader.getName());
 		MeaningDTO meaningDTO = new MeaningDTO();
-		logger.info("returning from meaningDownloader");
+ 		logger.info("returning from meaningDownloader");
 		return meaningDTO;
 	}
 
