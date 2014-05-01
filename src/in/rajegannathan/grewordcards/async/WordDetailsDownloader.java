@@ -47,44 +47,47 @@ public class WordDetailsDownloader extends Thread {
 			public void handleMessage(Message msg) {
 				quitIfInterrupted();
 				stackSize--;
-				if(stackSize > WordnikResultCache.NTHREADS){
+				if (stackSize > WordnikResultCache.NTHREADS) {
+					logger.info("returning as stackSize is greater than numthreads");
 					return;
 				}
 				int processStatus = 1;
 				String word = msg.obj.toString();
+				logger.info("Stacksize is "+stackSize);
+				logger.info("condition before entering while loop is "+(stackSize==0&&processStatus%PROCESSED_ALL != 0) );
 				while (stackSize == 0 && processStatus % PROCESSED_ALL != 0) {
-					WordnikCacheObject cacheObject = wrc.getWordnikCacheObject(word);
-					if (cacheObject.getMeaning() != null
-							&& processStatus % MEANING != 0) {
-						processStatus = processStatus * MEANING;
-						dispatchToUiQueue(cacheObject.getMeaning()
-								.getDisplayText(), MEANING);
-					}
-					if (cacheObject.getDerivative() != null
-							&& processStatus % DERIVATIVE != 0) {
-						processStatus = processStatus * DERIVATIVE;
-						dispatchToUiQueue(cacheObject.getDerivative()
-								.getDisplayText(), MEANING);
-					}
-					if (cacheObject.getEtymology() != null
-							&& processStatus % ETYMOLOGY != 0) {
-						processStatus = processStatus * ETYMOLOGY;
-						dispatchToUiQueue(cacheObject.getEtymology()
-								.getDisplayText(), MEANING);
-					}
-					if (cacheObject.getUsage() != null
-							&& processStatus % USAGE != 0) {
-						processStatus = processStatus * USAGE;
-						dispatchToUiQueue(cacheObject.getUsage()
-								.getDisplayText(), MEANING);
-					}
+					processStatus = processWord(processStatus, word);
 					try {
 						Thread.sleep(DOWNLOADER_SLEEP_TIME);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
 					}
+					logger.warning("thread interrupted. Mostly due to activity exit");
 				}
 				logger.info("in downloadThread's handle message" + word);
+			}
+
+			private int processWord(int processStatus, String word) {
+				WordnikCacheObject cacheObject = wrc.getWordnikCacheObject(word);
+				
+				if (cacheObject.getMeaning() != null && processStatus % MEANING != 0) {
+					processStatus = processStatus * MEANING;
+					dispatchToUiQueue(cacheObject.getMeaning().getDisplayText(), MEANING);
+				}
+				if (cacheObject.getDerivative() != null	&& processStatus % DERIVATIVE != 0) {
+					processStatus = processStatus * DERIVATIVE;
+					dispatchToUiQueue(cacheObject.getDerivative().getDisplayText(), DERIVATIVE);
+				}
+				if (cacheObject.getEtymology() != null && processStatus % ETYMOLOGY != 0) {
+					processStatus = processStatus * ETYMOLOGY;
+					dispatchToUiQueue(cacheObject.getEtymology()
+							.getDisplayText(), ETYMOLOGY);
+				}
+				if (cacheObject.getUsage() != null && processStatus % USAGE != 0) {
+					processStatus = processStatus * USAGE;
+					dispatchToUiQueue(cacheObject.getUsage().getDisplayText(), USAGE);
+				}
+				
+				return processStatus;
 			}
 
 			private void quitIfInterrupted() {
@@ -117,12 +120,13 @@ public class WordDetailsDownloader extends Thread {
 	}
 
 	public void fetchDetails(String word) {
+		stackSize++;
 		Message message = Message.obtain();
 		message.obj = word;
 		if (downloadHandler != null) {
 			downloadHandler.sendMessage(message);
 		}
-		stackSize++;
+		logger.info("Stacksize in fetchDetails is "+stackSize);
 	}
 
 	public void quit() {

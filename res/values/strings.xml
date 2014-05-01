@@ -12,6 +12,7 @@
     <string name="button_play">Play</string>
     <string name="title_activity_flash_card">FlashCardActivity</string>
     <string name="word_fragment_default">Default Word</string>
+    <string name="default_text">Waiting for data</string>
     <string name="boundary_text">Setting up flashcards</string>
 
 </resources>

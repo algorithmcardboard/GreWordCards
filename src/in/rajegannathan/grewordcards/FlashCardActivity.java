@@ -98,10 +98,17 @@ public class FlashCardActivity extends Activity {
 			populateWordDetails(cursor.getString(1));
 			break;
 		case WordDetailsDownloader.MEANING:
+			logger.info("Setting text in meaning fragment");
+			meaningFragment.setMeaning(msg.obj.toString());
 		case WordDetailsDownloader.DERIVATIVE:
+			logger.info("Setting text in derivative fragment");
+			derivativeFragment.setDerivativeText(msg.obj.toString());
 		case WordDetailsDownloader.ETYMOLOGY:
+			logger.info("Setting text in etymology fragment");
+			etymologyFragment.setEtymologyText(msg.obj.toString());
 		case WordDetailsDownloader.USAGE:
-			logger.info("in other details");
+			logger.info("Setting text in usage fragment");
+			usageFragment.setUsage(msg.obj.toString());
 			break;
 		}
 	}
@@ -151,7 +158,7 @@ public class FlashCardActivity extends Activity {
 		mDbHelper = new DBHelper(getApplicationContext());
 		cursor = getCursorForListView();
 		
-		logger.info("in postcreate" + cursor.getCount());
+		logger.info("in postcreate. Total words " + cursor.getCount());
 
 		if (cursor.getCount() != 0) {
 			interrupt = false;
